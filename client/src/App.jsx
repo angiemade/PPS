@@ -17,6 +17,7 @@ function App() {
   const [categoriaId, setCategoriaId] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [editingProductId, setEditingProductId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     getCategorias();
@@ -110,41 +111,50 @@ function App() {
     setPrecio(producto.precio);
     setCategoriaId(producto.categoria_id);
     setImagePreview(producto.imagen);
+    setIsEditing(true);
   };
 
   const actualizarProducto = () => {
-    if (!cropper) {
-      alert('Debes seleccionar y ajustar una imagen antes de actualizar el producto');
-      return;
-    }
+    const formdata = new FormData();
+    if (cropper && file) {
+      cropper.getCroppedCanvas({ width: 200, height: 200 }).toBlob(blob => {
+        formdata.append('image', blob, file.name);
+        formdata.append('id', editingProductId);
+        formdata.append('nombre', nombre);
+        formdata.append('descripcion', descripcion);
+        formdata.append('precio', precio);
+        formdata.append('categoria_id', categoriaId);
 
-    cropper.getCroppedCanvas({ width: 200, height: 200 }).toBlob(blob => {
-      const formdata = new FormData();
-      formdata.append('image', blob, file.name);
+        sendUpdateRequest(formdata);
+      });
+    } else {
       formdata.append('id', editingProductId);
       formdata.append('nombre', nombre);
       formdata.append('descripcion', descripcion);
       formdata.append('precio', precio);
       formdata.append('categoria_id', categoriaId);
+      sendUpdateRequest(formdata);
+    }
+  };
 
-      Axios.put("http://localhost:3001/productos/editar", formdata)
-        .then(() => {
-          getProductos();
-          limpiarCampos();
-          Swal.fire({
-            title: "Producto actualizado",
-            icon: "success",
-            timer: 2000,
-          });
-        })
-        .catch((error) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "No se logró actualizar el producto",
-          });
+  const sendUpdateRequest = (formdata) => {
+    Axios.put("http://localhost:3001/productos/editar", formdata)
+      .then(() => {
+        getProductos();
+        limpiarCampos();
+        Swal.fire({
+          title: "Producto actualizado",
+          icon: "success",
+          timer: 2000,
         });
-    });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "No se logró actualizar el producto",
+        });
+      });
   };
 
   const limpiarCampos = () => {
@@ -156,6 +166,7 @@ function App() {
     setFile(null);
     setCropper(null);
     setEditingProductId(null);
+    setIsEditing(false);
   };
 
   const eliminarProducto = (productId) => {
@@ -197,7 +208,7 @@ function App() {
   return (
     <div className="container">
       <div className="card my-5">
-        <div className="card-header">Agregar Nuevo Producto</div>
+        <div className="card-header">{isEditing ? "Editar Producto" : "Agregar Nuevo Producto"}</div>
         <div className="card-body">
           <div className="row">
             <div className="col-md-4">
@@ -284,7 +295,7 @@ function App() {
                   ))}
                 </select>
               </div>
-              {editingProductId ? (
+              {isEditing ? (
                 <div>
                   <button className="btn btn-warning me-2" onClick={actualizarProducto}>Actualizar Producto</button>
                   <button className="btn btn-secondary" onClick={limpiarCampos}>Cancelar</button>
@@ -348,6 +359,3 @@ function App() {
 }
 
 export default App;
-
-
-
