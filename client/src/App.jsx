@@ -17,7 +17,6 @@ function App() {
   const [categoriaId, setCategoriaId] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [editingProductId, setEditingProductId] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     getCategorias();
@@ -44,7 +43,9 @@ function App() {
       .then((response) => {
         const products = response.data.map(product => ({
           ...product,
-          imagen: product.imagen ? product.imagen : "http://localhost:3001/dbimages/default.jpg"
+          imagen: product.imagen
+            ? `http://localhost:3001/dbimages/${product.imagen}` // Si hay imagen, formar URL completa
+            : "http://localhost:3001/dbimages/default.jpg",      // Si no hay imagen, usar la predeterminada
         }));
         setProductList(products);
       })
@@ -57,6 +58,9 @@ function App() {
         });
       });
   };
+
+
+
 
   const selectedHandler = (e) => {
     const file = e.target.files[0];
@@ -110,8 +114,11 @@ function App() {
     setDescripcion(producto.descripcion);
     setPrecio(producto.precio);
     setCategoriaId(producto.categoria_id);
-    setImagePreview(producto.imagen);
-    setIsEditing(true);
+    setImagePreview(
+      producto.imagen
+        ? producto.imagen // Si ya es una URL completa
+        : "http://localhost:3001/dbimages/default.jpg" // Imagen predeterminada
+    );
   };
 
   const actualizarProducto = () => {
@@ -119,25 +126,20 @@ function App() {
     if (cropper && file) {
       cropper.getCroppedCanvas({ width: 200, height: 200 }).toBlob(blob => {
         formdata.append('image', blob, file.name);
-        formdata.append('id', editingProductId);
-        formdata.append('nombre', nombre);
-        formdata.append('descripcion', descripcion);
-        formdata.append('precio', precio);
-        formdata.append('categoria_id', categoriaId);
-
-        sendUpdateRequest(formdata);
+        continueUpdate(formdata);
       });
     } else {
-      formdata.append('id', editingProductId);
-      formdata.append('nombre', nombre);
-      formdata.append('descripcion', descripcion);
-      formdata.append('precio', precio);
-      formdata.append('categoria_id', categoriaId);
-      sendUpdateRequest(formdata);
+      continueUpdate(formdata);
     }
   };
 
-  const sendUpdateRequest = (formdata) => {
+  const continueUpdate = (formdata) => {
+    formdata.append('id', editingProductId);
+    formdata.append('nombre', nombre);
+    formdata.append('descripcion', descripcion);
+    formdata.append('precio', precio);
+    formdata.append('categoria_id', categoriaId);
+
     Axios.put("http://localhost:3001/productos/editar", formdata)
       .then(() => {
         getProductos();
@@ -166,7 +168,6 @@ function App() {
     setFile(null);
     setCropper(null);
     setEditingProductId(null);
-    setIsEditing(false);
   };
 
   const eliminarProducto = (productId) => {
@@ -208,7 +209,7 @@ function App() {
   return (
     <div className="container">
       <div className="card my-5">
-        <div className="card-header">{isEditing ? "Editar Producto" : "Agregar Nuevo Producto"}</div>
+        <div className="card-header">Agregar Nuevo Producto</div>
         <div className="card-body">
           <div className="row">
             <div className="col-md-4">
@@ -295,7 +296,7 @@ function App() {
                   ))}
                 </select>
               </div>
-              {isEditing ? (
+              {editingProductId ? (
                 <div>
                   <button className="btn btn-warning me-2" onClick={actualizarProducto}>Actualizar Producto</button>
                   <button className="btn btn-secondary" onClick={limpiarCampos}>Cancelar</button>
@@ -323,9 +324,15 @@ function App() {
                       style={{
                         height: "200px",
                         width: "100%",
-                        objectFit: "cover"
+                        objectFit: "cover",
+                      }}
+                      onError={(e) => {
+                        e.target.onerror = null; // Evita bucles infinitos de errores
+                        e.target.src = "http://localhost:3001/dbimages/default.jpg"; // Imagen predeterminada
                       }}
                     />
+
+
                   </div>
                   <div className="col-md-8">
                     <div className="card-body">

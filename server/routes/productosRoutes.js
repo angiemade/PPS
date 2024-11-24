@@ -111,8 +111,10 @@ router.put("/editar", fileUpload, (req, res) => {
 });
 
 // LISTAR PRODUCTOS
+
+
 router.get("/listar", (req, res) => {
-    const db = req.db; // Asegúrate de tener la conexión de la base de datos accesible desde req.db.
+    const db = req.db;
 
     const query = `
         SELECT 
@@ -139,11 +141,11 @@ router.get("/listar", (req, res) => {
                 categoria_id: product.categoria_id,
                 imagen: product.imagen ? `http://localhost:3001/dbimages/${product.imagen}` : null
             }));
-
             res.status(200).json(products);
         }
     });
 });
+
 
 // ELIMINAR PRODUCTO
 router.delete("/eliminar/:id", (req, res) => {
