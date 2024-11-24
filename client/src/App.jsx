@@ -67,12 +67,13 @@ function App() {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setImagePreview(reader.result);
-        setFile(file);
+        setImagePreview(reader.result); // Actualizar la vista previa
+        setFile(file); // Establecer el archivo para enviarlo
       };
       reader.readAsDataURL(file);
     }
   };
+
 
   const addProducto = () => {
     if (!cropper) {
@@ -108,23 +109,43 @@ function App() {
     });
   };
 
+  // const editarProducto = (producto) => {
+  //   setEditingProductId(producto.id);
+  //   setNombre(producto.nombre);
+  //   setDescripcion(producto.descripcion);
+  //   setPrecio(producto.precio);
+  //   setCategoriaId(producto.categoria_id);
+  //   setImagePreview(
+  //     producto.imagen
+  //       ? producto.imagen // Si ya es una URL completa
+  //       : "http://localhost:3001/dbimages/default.jpg" // Imagen predeterminada
+  //   );
+  //   // Desplazar hacia el formulario
+  //   window.scrollTo({
+  //     top: 0,
+  //     behavior: "smooth",
+  //   });
+  // };
+
+
+  //me permite ajustar kas imagenes pero solo las default ahora ya que no muestra 
   const editarProducto = (producto) => {
     setEditingProductId(producto.id);
     setNombre(producto.nombre);
     setDescripcion(producto.descripcion);
     setPrecio(producto.precio);
     setCategoriaId(producto.categoria_id);
-    setImagePreview(
-      producto.imagen
-        ? producto.imagen // Si ya es una URL completa
-        : "http://localhost:3001/dbimages/default.jpg" // Imagen predeterminada
-    );
+
+    // Cargar la imagen existente en el recortador
+    setImagePreview(producto.imagen);
+
     // Desplazar hacia el formulario
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
+
 
 
   const actualizarProducto = () => {
@@ -179,6 +200,8 @@ function App() {
 
 
   const limpiarCampos = () => {
+    const editingProductElement = document.getElementById(`product-${editingProductId}`);
+
     setNombre("");
     setDescripcion("");
     setPrecio("");
@@ -187,7 +210,18 @@ function App() {
     setFile(null);
     setCropper(null);
     setEditingProductId(null);
+
+    // Si estamos editando un producto, desplazar hacia él
+    if (editingProductElement) {
+      setTimeout(() => {
+        editingProductElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 200); // Pequeña espera para que React limpie el estado antes del scroll
+    }
   };
+
 
   const eliminarProducto = (productId) => {
     Swal.fire({
@@ -225,12 +259,58 @@ function App() {
     });
   };
 
+  const subirSinImagen = () => {
+    Swal.fire({
+      title: "¿Quieres subir este producto sin una imagen?",
+      text: "Se mostrará la imagen predeterminada.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, subir sin imagen",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const formdata = new FormData();
+        formdata.append('nombre', nombre);
+        formdata.append('descripcion', descripcion);
+        formdata.append('precio', precio);
+        formdata.append('categoria_id', categoriaId);
+
+        Axios.post("http://localhost:3001/productos/create", formdata)
+          .then(() => {
+            getProductos();
+            limpiarCampos();
+            Swal.fire({
+              title: "Producto registrado sin imagen",
+              icon: "success",
+              timer: 2000,
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "No se logró registrar el producto sin imagen (complete los campos requeridos)",
+            });
+          });
+      }
+    });
+  };
+
+
   return (
     <div className="container">
       <div className="card my-5">
         <div className="card-header">Agregar Nuevo Producto</div>
         <div className="card-body">
           <div className="row">
+
+
+
+
+
+
             <div className="col-md-4">
               <div
                 className="card d-flex justify-content-center align-items-center"
@@ -240,7 +320,7 @@ function App() {
                   backgroundColor: '#f8f9fa',
                   border: '2px dashed #ced4da',
                   cursor: 'pointer',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
                 }}
                 onClick={() => !imagePreview && document.getElementById('fileinput').click()}
               >
@@ -271,7 +351,45 @@ function App() {
                   onChange={selectedHandler}
                 />
               </div>
+
+              {/* Botón para elegir otra imagen cuando se agrega un producto */}
+              {!editingProductId && imagePreview && (
+                <div className="mt-2">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => document.getElementById('fileinput').click()}
+                  >
+                    Elige otra imagen
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => subirSinImagen()}
+                  >
+                    Sin Imagen
+                  </button>
+                </div>
+              )}
+
+              {/* Botón para cambiar la imagen en modo edición */}
+              {editingProductId && (
+                <div className="mt-2">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => document.getElementById('fileinput').click()}
+                  >
+                    Cambiar Imagen
+                  </button>
+                </div>
+              )}
             </div>
+
+
+
+
+
+
+
+
 
             <div className="col-md-8">
               <div className="input-group mb-3">
