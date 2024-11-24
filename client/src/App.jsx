@@ -119,7 +119,13 @@ function App() {
         ? producto.imagen // Si ya es una URL completa
         : "http://localhost:3001/dbimages/default.jpg" // Imagen predeterminada
     );
+    // Desplazar hacia el formulario
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
+
 
   const actualizarProducto = () => {
     const formdata = new FormData();
@@ -144,6 +150,18 @@ function App() {
       .then(() => {
         getProductos();
         limpiarCampos();
+
+        // Esperar a que la lista de productos se actualice
+        setTimeout(() => {
+          const updatedProduct = document.getElementById(`product-${editingProductId}`);
+          if (updatedProduct) {
+            updatedProduct.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+        }, 500);
+
         Swal.fire({
           title: "Producto actualizado",
           icon: "success",
@@ -158,6 +176,7 @@ function App() {
         });
       });
   };
+
 
   const limpiarCampos = () => {
     setNombre("");
@@ -313,7 +332,7 @@ function App() {
         <h4>Productos Registrados</h4>
         <div className="row">
           {productList.map((product) => (
-            <div key={product.id} className="col-md-6 mb-4">
+            <div id={`product-${product.id}`} key={product.id} className="col-md-6 mb-4">
               <div className="card">
                 <div className="row no-gutters">
                   <div className="col-md-4">
@@ -331,8 +350,6 @@ function App() {
                         e.target.src = "http://localhost:3001/dbimages/default.jpg"; // Imagen predeterminada
                       }}
                     />
-
-
                   </div>
                   <div className="col-md-8">
                     <div className="card-body">
