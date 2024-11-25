@@ -1,0 +1,12 @@
+.cropper-container {
+    max-height: 200px; /* Limita la altura */
+    max-width: 100%; /* Mantiene la proporción */
+    overflow: hidden; /* Evita que el contenido salga del contenedor */
+  }
+  
+  .cropper-img-preview {
+    object-fit: cover; /* Asegura que la imagen se ajuste dentro del contenedor */
+    width: 100%;
+    height: auto;
+  }
+  

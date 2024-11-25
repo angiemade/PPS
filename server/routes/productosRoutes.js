@@ -62,53 +62,109 @@ router.post("/create", fileUpload, (req, res) => {
         );
     }
 });
+//esto es sin sacar la imagen cuando edito 
+// // ACTUALIZAR/EDITAR PRODUCTO (incluyendo imagen)
+// router.put("/editar", fileUpload, (req, res) => {
+//     const { id, nombre, descripcion, precio, categoria_id } = req.body;
+//     const db = req.db;
 
-// ACTUALIZAR/EDITAR PRODUCTO (incluyendo imagen)
+//     if (req.file) {
+//         const tipo = req.file.mimetype;
+//         const nombreArchivo = req.file.originalname;
+//         const datos = fs.readFileSync(req.file.path);
+
+//         // Primero insertar/actualizar la imagen
+//         db.query('INSERT INTO foto SET ?', [{ tipo, nombre: nombreArchivo, datos }], (err, fotoResult) => {
+//             if (err) {
+//                 console.log(err);
+//                 res.status(500).send("Error al actualizar la imagen");
+//             } else {
+//                 const imagen_id = fotoResult.insertId;
+
+//                 db.query('UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ?, imagen_id = ? WHERE id = ?',
+//                     [nombre, descripcion, precio, categoria_id, imagen_id, id],
+//                     (err, result) => {
+//                         if (err) {
+//                             console.log(err);
+//                             res.status(500).send("Error al actualizar el producto");
+//                         } else {
+//                             res.send(result);
+//                         }
+//                     }
+//                 );
+//             }
+//         });
+//     } else {
+//         // Si no se proporciona una nueva imagen, actualizar solo los datos del producto
+//         db.query('UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ? WHERE id = ?',
+//             [nombre, descripcion, precio, categoria_id, id],
+//             (err, result) => {
+//                 if (err) {
+//                     console.log(err);
+//                     res.status(500).send("Error al actualizar el producto");
+//                 } else {
+//                     res.send(result);
+//                 }
+//             }
+//         );
+//     }
+// });
+
+
 router.put("/editar", fileUpload, (req, res) => {
     const { id, nombre, descripcion, precio, categoria_id } = req.body;
     const db = req.db;
-
+  
     if (req.file) {
-        const tipo = req.file.mimetype;
-        const nombreArchivo = req.file.originalname;
-        const datos = fs.readFileSync(req.file.path);
-
-        // Primero insertar/actualizar la imagen
-        db.query('INSERT INTO foto SET ?', [{ tipo, nombre: nombreArchivo, datos }], (err, fotoResult) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send("Error al actualizar la imagen");
-            } else {
-                const imagen_id = fotoResult.insertId;
-
-                db.query('UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ?, imagen_id = ? WHERE id = ?',
-                    [nombre, descripcion, precio, categoria_id, imagen_id, id],
-                    (err, result) => {
-                        if (err) {
-                            console.log(err);
-                            res.status(500).send("Error al actualizar el producto");
-                        } else {
-                            res.send(result);
-                        }
-                    }
-                );
-            }
-        });
-    } else {
-        // Si no se proporciona una nueva imagen, actualizar solo los datos del producto
-        db.query('UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ? WHERE id = ?',
-            [nombre, descripcion, precio, categoria_id, id],
+      // Actualizar producto con una nueva imagen
+      const tipo = req.file.mimetype;
+      const nombreArchivo = req.file.originalname;
+      const datos = fs.readFileSync(req.file.path);
+  
+      db.query('INSERT INTO foto SET ?', [{ tipo, nombre: nombreArchivo, datos }], (err, fotoResult) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send("Error al actualizar la imagen");
+        } else {
+          const imagen_id = fotoResult.insertId;
+  
+          db.query('UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ?, imagen_id = ? WHERE id = ?',
+            [nombre, descripcion, precio, categoria_id, imagen_id, id],
             (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send("Error al actualizar el producto");
-                } else {
-                    res.send(result);
-                }
+              if (err) {
+                console.log(err);
+                res.status(500).send("Error al actualizar el producto");
+              } else {
+                res.send(result);
+              }
             }
-        );
+          );
+        }
+      });
+    } else {
+      // Actualizar producto sin imagen (asignar null para imagen_id)
+      db.query('UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, categoria_id = ?, imagen_id = NULL WHERE id = ?',
+        [nombre, descripcion, precio, categoria_id, id],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(500).send("Error al actualizar el producto");
+          } else {
+            res.send(result);
+          }
+        }
+      );
     }
-});
+  });
+  
+
+
+
+
+
+
+
+
 
 // LISTAR PRODUCTOS
 
