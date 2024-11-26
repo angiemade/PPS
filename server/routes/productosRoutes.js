@@ -222,102 +222,61 @@ router.get("/listar", (req, res) => {
     });
 });
 
-
-
-
-// router.get("/listar", (req, res) => {
-//     const db = req.db;
-
-//     const query = `
-//         SELECT 
-//             p.id,
-//             p.nombre,
-//             p.descripcion,
-//             p.precio,
-//             p.categoria_id,
-//             f.nombre AS imagen
-//         FROM productos p
-//         LEFT JOIN foto f ON p.imagen_id = f.id
-//     `;
-
-//     db.query(query, (err, results) => {
-//         if (err) {
-//             console.log("Error al obtener los productos:", err);
-//             res.status(500).send("Error al obtener los productos");
-//         } else {
-//             const products = results.map(product => ({
-//                 id: product.id,
-//                 nombre: product.nombre,
-//                 descripcion: product.descripcion,
-//                 precio: product.precio,
-//                 categoria_id: product.categoria_id,
-//                 imagen: product.imagen ? `http://localhost:3001/dbimages/${product.imagen}` : null
-//             }));
-//             res.status(200).json(products);
-//         }
-//     });
-// });
-
-
-
-
-
-// ELIMINAR PRODUCTO
-// === productosRoutes.js (Rutas para Productos y Categorías) ===
+//ELIMINAR
 
 // RUTA PARA LIMPIAR TODAS LAS IMÁGENES DE LA CARPETA Y ACTUALIZAR LA BASE DE DATOS
-router.delete("/limpiar-imagenes", (req, res) => {
+router.delete("/eliminar/:id", (req, res) => {
+    const { id } = req.params;
     const db = req.db;
 
-    // Obtener todas las imágenes de la base de datos
-    db.query('SELECT id, nombre FROM foto', (err, fotos) => {
+    // Obtener la información de la imagen del producto
+    db.query('SELECT imagen_id, f.nombre AS imagen_nombre FROM productos p LEFT JOIN foto f ON p.imagen_id = f.id WHERE p.id = ?', [id], (err, result) => {
         if (err) {
-            console.log("Error al obtener las imágenes de la base de datos:", err);
-            return res.status(500).send("Error al obtener las imágenes de la base de datos");
+            console.log("Error al obtener la imagen del producto:", err);
+            return res.status(500).send("Error al obtener la información del producto");
         }
 
-        const directoryPath = path.join(__dirname, '../dbimages');
-        let errors = [];
+        if (result.length > 0) {
+            const imagen_id = result[0].imagen_id;
+            const imagen_nombre = result[0].imagen_nombre;
 
-        // Eliminar cada archivo de la carpeta 'dbimages'
-        fotos.forEach((foto) => {
-            const filePath = path.join(directoryPath, foto.nombre);
-            if (fs.existsSync(filePath)) {
-                try {
-                    fs.unlinkSync(filePath); // Eliminar físicamente la imagen
-                } catch (unlinkErr) {
-                    console.log("Error al eliminar la imagen:", foto.nombre, unlinkErr);
-                    errors.push(foto.nombre);
-                }
-            }
-        });
-
-        // Eliminar todas las entradas de la tabla 'foto' en la base de datos
-        db.query('DELETE FROM foto', (deleteErr) => {
-            if (deleteErr) {
-                console.log("Error al eliminar las entradas de la tabla 'foto':", deleteErr);
-                return res.status(500).send("Error al eliminar las entradas de la tabla 'foto'");
-            }
-
-            // Actualizar todos los productos para que no tengan referencia a imágenes
-            db.query('UPDATE productos SET imagen_id = NULL', (updateErr) => {
-                if (updateErr) {
-                    console.log("Error al actualizar los productos:", updateErr);
-                    return res.status(500).send("Error al actualizar los productos");
+            // Eliminar el producto de la base de datos
+            db.query('DELETE FROM productos WHERE id = ?', [id], (deleteProductoErr) => {
+                if (deleteProductoErr) {
+                    console.log("Error al eliminar el producto:", deleteProductoErr);
+                    return res.status(500).send("Error al eliminar el producto");
                 }
 
-                if (errors.length > 0) {
-                    return res.status(207).send({
-                        message: "Las imágenes fueron eliminadas, pero algunas no pudieron ser eliminadas físicamente.",
-                        errores: errors
+                // Eliminar la imagen del sistema de archivos si existe
+                if (imagen_nombre) {
+                    const imagePath = path.join(__dirname, '../dbimages', imagen_nombre);
+                    if (fs.existsSync(imagePath)) {
+                        fs.unlink(imagePath, (unlinkErr) => {
+                            if (unlinkErr) {
+                                console.log("Error al eliminar la imagen del sistema de archivos:", unlinkErr);
+                            }
+                        });
+                    }
+                }
+
+                // Eliminar el registro de la imagen de la base de datos
+                if (imagen_id) {
+                    db.query('DELETE FROM foto WHERE id = ?', [imagen_id], (deleteFotoErr) => {
+                        if (deleteFotoErr) {
+                            console.log("Error al eliminar la entrada de la tabla 'foto':", deleteFotoErr);
+                        }
                     });
-                } else {
-                    return res.status(200).send("Todas las imágenes fueron eliminadas correctamente de la carpeta y la base de datos fue actualizada.");
                 }
+
+                // Si todo ha sido exitoso, enviar una respuesta de éxito
+                res.status(200).send("Producto eliminado correctamente");
             });
-        });
+        } else {
+            res.status(404).send("Producto no encontrado");
+        }
     });
 });
+
 
 
 module.exports = router; // Asegúrate de exportar el router
