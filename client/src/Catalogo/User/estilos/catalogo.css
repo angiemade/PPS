@@ -1,0 +1,136 @@
+/* Contenedor principal de la barra de navegación */
+.navbar-container {
+    background-color: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+    /* position: fixed; */
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  /* Barra de navegación centrada */
+  .navbar {
+    width: 90%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+  }
+  
+  /* Logo a la izquierda */
+  .navbar-logo .logo-text {
+    color: #f9d8de;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  /* Barra de búsqueda en el centro */
+  .navbar-search {
+    flex: 1;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .navbar-search .input-group {
+    width: 100%;
+  }
+  
+  .navbar-search .form-control {
+    background-color: #f9d8de;
+    border-color: #f9d8de;
+    border-radius: 20px;
+  }
+  
+  .navbar-search .input-group-text {
+    background-color: #f9d8de;
+    border-color: #f9d8de;
+    border-radius: 20px;
+    color: #8e99a2;
+  }
+  
+  /* Icono del carrito a la derecha */
+  .navbar-cart {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Espacio superior para el contenido, para que no quede debajo de la barra de navegación */
+  .container {
+    margin-top: 120px; /* Ajustar según la altura de la barra de navegación */
+    padding-bottom: 100px; /* Aumentar espacio en la parte inferior para permitir el desplazamiento completo */
+    min-height: 100vh; /* Asegurar que el contenedor ocupe toda la pantalla */
+  }
+  
+  
+  /* Estilos de la tarjeta de producto */
+  .product-card {
+    background-color: #f9d8de;
+    border-radius: 10px;
+  }
+  
+  .product-card .card-body {
+    padding: 15px;
+  }
+  
+  .product-card .card-title {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .product-card .card-text {
+    margin: 5px 0;
+  }
+  
+  /* Ajustes para el contenedor de la imagen */
+  .product-card .col-md-4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  /* Ajustes para la imagen en sí */
+  .product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  /* Estilo para el botón de agregar al carrito */
+  .custom-add-to-cart-btn {
+    background-color: #8e99a2;
+    color: #ffffff;
+    border: none;
+  }
+  
+  .custom-add-to-cart-btn:hover {
+    background-color: #7c8894;
+    color: #ffffff;
+  }
+  
+  /* Ajuste para permitir que la página completa tenga desplazamiento */
+  html, body {
+    width: 100%;
+    height: auto; /* Cambiar de 100% a auto */
+    overflow-y: auto; /* Mantener habilitado el desplazamiento vertical */
+    overflow-x: hidden; /* Evitar desplazamiento horizontal innecesario */
+    margin: 0;
+    padding: 0;
+  }
+  
+  
+  /* Scroll en el cuerpo del modal */
+  .modal-body {
+    max-height: 60vh; /* Limita la altura del contenido del modal */
+    overflow-y: auto; /* Activa el desplazamiento vertical si el contenido es largo */
+  }
+  
+  .overflow-hidden {
+    overflow: hidden;
+  }
