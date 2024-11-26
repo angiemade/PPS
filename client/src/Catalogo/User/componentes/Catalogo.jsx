@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import logo from '../imagenes/PEQUETA.png'; // Importa el logo desde la ruta especificada
+import Header from './Header';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importa estilos de Bootstrap
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Importa los íconos de Bootstrap
 import Swal from 'sweetalert2';
@@ -15,10 +15,19 @@ const Catalogo = () => {
     const [total, setTotal] = useState(0);
     // Estado para la lista de productos
     const [productList, setProductList] = useState([]);
+    // Estado para la lista de categorías
+    const [categorias, setCategorias] = useState([]);
+    // Estado para la categoría seleccionada
+    const [selectedCategoria, setSelectedCategoria] = useState('');
+    // Estado para el término de búsqueda
+    const [searchTerm, setSearchTerm] = useState('');
+    // Estado para mostrar u ocultar las categorías
+    const [showCategorias, setShowCategorias] = useState(false);
 
     // Función para obtener los productos desde el backend
     useEffect(() => {
         getProductos();
+        getCategorias();
     }, []);
 
     const getProductos = () => {
@@ -36,6 +45,21 @@ const Catalogo = () => {
                     icon: "error",
                     title: "Error",
                     text: "Error al obtener los productos. Verifique el servidor.",
+                });
+            });
+    };
+
+    const getCategorias = () => {
+        Axios.get("http://localhost:3001/categorias")
+            .then((response) => {
+                setCategorias(response.data);
+            })
+            .catch((error) => {
+                console.error("Error al obtener las categorías", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Error al obtener las categorías. Verifique el servidor.",
                 });
             });
     };
@@ -88,41 +112,31 @@ const Catalogo = () => {
         return encodeURIComponent(message); // Codifica el mensaje para usarlo en la URL
     };
 
+    // Filtra los productos según la categoría seleccionada y el término de búsqueda
+    const filteredProducts = productList.filter(product => {
+        return (
+            (selectedCategoria === '' || product.categoria_id === selectedCategoria) &&
+            (searchTerm === '' || product.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+    });
+
     return (
-        <div className="navbar-container">
-            {/* Barra de navegación */}
-            <nav className="navbar d-flex justify-content-between align-items-center mx-auto">
-                {/* Logo */}
-                <div className="navbar-logo d-flex align-items-center">
-                    <a href="/" className="navbar-brand d-flex align-items-center">
-                        <img src={logo} alt="Logo" width="160" height="75" className="me-2" />
-                    </a>
-                </div>
-                {/* Barra de búsqueda */}
-                <div className="navbar-search">
-                    <div className="input-group">
-                        <input type="text" className="form-control" placeholder="Buscar" aria-label="Buscar" />
-                        <button className="btn input-group-text" onClick={() => alert('Buscando...')}>
-                            <i className="bi bi-search-heart"></i>
-                        </button>
-                    </div>
-                </div>
-                {/* Botón del carrito */}
-                <div className="navbar-cart d-flex align-items-center">
-                    <button type="button" className="btn position-relative" onClick={() => setShowCart(true)}>
-                        <i className="bi bi-cart3" style={{ fontSize: '1.5rem', color: '#8e99a2' }}></i>
-                        {cartItems.length > 0 && (
-                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {cartItems.length} {/* Muestra el número de artículos en el carrito */}
-                            </span>
-                        )}
-                    </button>
-                </div>
-            </nav>
+        <div>
+            <Header
+                cartItems={cartItems}
+                setShowCart={setShowCart}
+                categorias={categorias}
+                selectedCategoria={selectedCategoria}
+                setSelectedCategoria={setSelectedCategoria}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                showCategorias={showCategorias}
+                setShowCategorias={setShowCategorias}
+            />
             {/* Catálogo de productos */}
             <div className="container mt-5">
                 <div className="row justify-content-center">
-                    {productList.map((product) => (
+                    {filteredProducts.map((product) => (
                         <div key={product.id} className="col-lg-4 col-md-6 col-sm-12 mb-4">
                             <div className="card h-100"
                                 style={{
