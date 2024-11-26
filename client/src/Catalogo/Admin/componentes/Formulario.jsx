@@ -71,14 +71,34 @@ function Formulario() {
     };
 
     const addProducto = () => {
-        if (!cropper) {
-            alert('Debes seleccionar y ajustar una imagen antes de agregar el producto');
-            return;
-        }
+        const formdata = new FormData();
+        if (cropper) {
+            cropper.getCroppedCanvas({ width: 200, height: 200 }).toBlob(blob => {
+                formdata.append('image', blob, file.name);
+                formdata.append('nombre', nombre);
+                formdata.append('descripcion', descripcion);
+                formdata.append('precio', precio);
+                formdata.append('categoria_id', categoriaId);
 
-        cropper.getCroppedCanvas({ width: 200, height: 200 }).toBlob(blob => {
-            const formdata = new FormData();
-            formdata.append('image', blob, file.name);
+                Axios.post("http://localhost:3001/productos/create", formdata)
+                    .then(() => {
+                        getProductos();
+                        limpiarCampos();
+                        Swal.fire({
+                            title: "Producto registrado",
+                            icon: "success",
+                            timer: 2000,
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "No se logró registrar el producto",
+                        });
+                    });
+            });
+        } else {
             formdata.append('nombre', nombre);
             formdata.append('descripcion', descripcion);
             formdata.append('precio', precio);
@@ -89,7 +109,7 @@ function Formulario() {
                     getProductos();
                     limpiarCampos();
                     Swal.fire({
-                        title: "Producto registrado",
+                        title: "Producto registrado sin imagen",
                         icon: "success",
                         timer: 2000,
                     });
@@ -101,7 +121,7 @@ function Formulario() {
                         text: "No se logró registrar el producto",
                     });
                 });
-        });
+        }
     };
 
     const editarProducto = (producto) => {
@@ -119,10 +139,10 @@ function Formulario() {
     };
 
     const actualizarProducto = () => {
-        if (cropper) {
+        const formdata = new FormData();
+        if (cropper && file) {
             cropper.getCroppedCanvas({ width: 200, height: 200 }).toBlob(blob => {
-                const formdata = new FormData();
-                formdata.append('image', blob, file ? file.name : 'updated-image.jpg');
+                formdata.append('image', blob, file.name);
                 formdata.append('id', editingProductId);
                 formdata.append('nombre', nombre);
                 formdata.append('descripcion', descripcion);
@@ -131,7 +151,6 @@ function Formulario() {
                 continueUpdate(formdata);
             });
         } else {
-            const formdata = new FormData();
             formdata.append('id', editingProductId);
             formdata.append('nombre', nombre);
             formdata.append('descripcion', descripcion);
@@ -274,6 +293,7 @@ function Formulario() {
                 formdata.append('descripcion', descripcion);
                 formdata.append('precio', precio);
                 formdata.append('categoria_id', categoriaId);
+                formdata.append('sin_imagen', true);
 
                 Axios.put("http://localhost:3001/productos/editar", formdata)
                     .then(() => {
