@@ -320,6 +320,14 @@ function Formulario() {
         <div className="container-fluid d-flex justify-content-center align-items-center flex-column" style={{ minHeight: "100vh", backgroundColor: '#f8f9fa', padding: '40px 0' }}>
             <div className="container">
                 <Categorias />
+
+                <button className="btn btn-secondary" onClick={() => {
+                    localStorage.removeItem('auth');
+                    navigate('/login');
+                }}>
+                    Cerrar Sesión <i className="bi bi-box-arrow-right"></i>
+                </button>
+
                 <div className="card my-5 mx-auto" style={{ padding: '20px', border: '1px solid #000', borderRadius: '15px', maxWidth: '800px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                     <h3 className="card-title text-center mb-4" style={{ color: '#333', fontWeight: 'bold' }}>Agregar Nuevo Producto</h3>
                     <div className="card-body">

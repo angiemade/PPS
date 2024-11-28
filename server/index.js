@@ -36,6 +36,7 @@ app.use('/dbimages', express.static(path.join(__dirname, 'dbimages')));
 app.use('/imagenes', require('./routes/imagenesRoutes'));
 app.use('/categorias', require('./routes/categoriasRoutes'));
 app.use('/productos', require('./routes/productosRoutes')); // Nueva ruta de productos
+app.use('/login', require('./routes/loginRoutes')); // La ruta coincide con el nombre del archivo (todo en minúsculas)
 
 app.listen(3001, () => {
     console.log('Servidor corriendo en', 'http://localhost:' + 3001);

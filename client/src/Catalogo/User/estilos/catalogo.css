@@ -40,18 +40,19 @@
   .navbar-search .input-group {
     width: 100%;
   }
-  
+
+   /*barra de buscar*/
   .navbar-search .form-control {
-    background-color: #f9d8de;
-    border-color: #f9d8de;
+    background-color: #ffffff;
+    border-color: #000000;
     border-radius: 20px;
   }
   
   .navbar-search .input-group-text {
-    background-color: #f9d8de;
-    border-color: #f9d8de;
+    background-color: #f8f8f8;
+    border-color: #000000;
     border-radius: 20px;
-    color: #8e99a2;
+    color: #363738;
   }
   
   /* Icono del carrito a la derecha */

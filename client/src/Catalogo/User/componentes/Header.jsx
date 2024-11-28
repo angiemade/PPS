@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import logo from '../imagenes/PEQUETA.png'; // Importa el logo desde la ruta especificada
+import logo from '../imagenes/LogoPequeta.svg'; // Importa el logo desde la ruta especificada
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importa estilos de Bootstrap
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Importa los íconos de Bootstrap
 
@@ -36,9 +36,9 @@ const Header = ({
     }, []);
 
     return (
-        <div className="navbar-container">
+        <div className="navbar-container" >
             {/* Barra de navegación */}
-            <nav className="navbar d-flex justify-content-between align-items-center mx-auto" style={{ padding: '10px 20px', backgroundColor: '#ffffff' }}>
+            <nav className="navbar d-flex justify-content-between align-items-center mx-auto" >
                 {/* Logo */}
                 <div className="navbar-logo d-flex align-items-center">
                     <a href="/" className="navbar-brand d-flex align-items-center">

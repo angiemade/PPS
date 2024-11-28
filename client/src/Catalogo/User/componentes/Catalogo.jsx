@@ -121,7 +121,7 @@ const Catalogo = () => {
     });
 
     return (
-        <div>
+        <div >
             <Header
                 cartItems={cartItems}
                 setShowCart={setShowCart}
@@ -134,7 +134,7 @@ const Catalogo = () => {
                 setShowCategorias={setShowCategorias}
             />
             {/* Catálogo de productos */}
-            <div className="container mt-5">
+            <div className="container mt-5" >
                 <div className="row justify-content-center">
                     {filteredProducts.map((product) => (
                         <div key={product.id} className="col-lg-4 col-md-6 col-sm-12 mb-4">
@@ -143,9 +143,10 @@ const Catalogo = () => {
                                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                                     transition: "transform 0.3s ease, box-shadow 0.3s ease",
                                     borderRadius: "15px",
+                                    background:"#f3dee2" //color de las card 
                                 }}>
-                                <div className="card-body d-flex align-items-center">
-                                    <div className="col-4">
+                                <div className="card-body d-flex align-items-center"  >
+                                    <div className="col-4" >
                                         <img
                                             src={product.imagen}
                                             className="card-img"
