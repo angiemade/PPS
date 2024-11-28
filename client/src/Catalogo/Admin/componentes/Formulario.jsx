@@ -481,13 +481,13 @@ function Formulario() {
                                                     className="btn btn-warning mt-2 me-2" style={{ fontWeight: 'bold' }}
                                                     onClick={() => editarProducto(product)}
                                                 >
-                                                    Editar
+                                                    <i class="bi bi-pencil-square"></i>
                                                 </button>
                                                 <button
                                                     className="btn btn-danger mt-2" style={{ fontWeight: 'bold' }}
                                                     onClick={() => eliminarProducto(product.id)}
                                                 >
-                                                    Eliminar
+                                                    <i class="bi bi-trash3-fill"></i>
                                                 </button>
                                             </div>
                                         </div>
