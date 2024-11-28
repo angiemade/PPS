@@ -143,7 +143,7 @@ const Catalogo = () => {
                                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                                     transition: "transform 0.3s ease, box-shadow 0.3s ease",
                                     borderRadius: "15px",
-                                    background:"#f3dee2" //color de las card 
+                                    background:"#fbedef" //color de las card 
                                 }}>
                                 <div className="card-body d-flex align-items-center"  >
                                     <div className="col-4" >
@@ -169,7 +169,7 @@ const Catalogo = () => {
                                             <p className="card-text">{product.descripcion}</p>
                                             <p className="card-text fw-bold">${product.precio}</p>
                                             <button className="btn custom-add-to-cart-btn" onClick={() => addToCart(product)}>
-                                                Agregar al Carrito
+                                            <i class="bi bi-cart3"></i> Agregar al Carrito
                                             </button>
                                         </div>
                                     </div>

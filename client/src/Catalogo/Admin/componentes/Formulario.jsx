@@ -429,12 +429,7 @@ function Formulario() {
                                     {editingProductId ? (
                                         <div>
                                             <button className="btn btn-warning me-2" onClick={actualizarProducto}>Actualizar Producto</button>
-                                            <button
-                                                className="btn btn-danger me-2"
-                                                onClick={actualizarSinImagen}
-                                            >
-                                                Sin Imagen
-                                            </button>
+                                           
                                             <button className="btn btn-secondary" onClick={limpiarCampos}>Cancelar</button>
                                         </div>
                                     ) : (

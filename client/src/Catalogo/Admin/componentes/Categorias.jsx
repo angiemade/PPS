@@ -115,12 +115,12 @@ function CategoriasApp() {
                                 onChange={(event) => setNombreCategoria(event.target.value)}
                                 placeholder="Escribe una categoría..."
                                 value={nombreCategoria}
-                                style={{ borderRadius: '30px 0 0 30px', border: '1px solid #000' }}
+                                style={{ borderRadius: '10px 0 0 10px', border: '1px solid #000' }}
                             />
                             <button
-                                className="btn"
+                                className="btn btn-success"
                                 onClick={editar ? putCategoria : addCategoria}
-                                style={{ backgroundColor: '#F9D8DE', color: '#000', borderRadius: '0 30px 30px 0', fontWeight: 'bold', border: '1px solid #000' }}
+                                style={{  color: '#FFF', borderRadius: '0 10px 10px 0', fontWeight: 'bold', border: '1px solid #000' }}
                             >
                                 {editar ? "Actualizar" : "Agregar"}
                             </button>
@@ -130,7 +130,7 @@ function CategoriasApp() {
                         <button
                             className="btn text-center"
                             onClick={() => setDesplegar(!desplegar)}
-                            style={{ backgroundColor: '#F7C1CA', color: '#000', border: '0px solid #000', borderRadius: '20px', fontWeight: 'bold' }}
+                            style={{ backgroundColor: '#8e99a2', color: '#fff', border: '0px solid #000', borderRadius: '5px', fontWeight: 'bold' }}
                         >
                             {desplegar ? (
                                 <><i className="bi bi-caret-up-fill"></i> Ocultar Categorías</>
@@ -153,16 +153,16 @@ function CategoriasApp() {
                                                 <button
                                                     type="button"
                                                     onClick={() => editarCategoria(categoria)}
-                                                    className="btn"
-                                                    style={{ backgroundColor: '#fff', border: '1px solid #000', color: '#000', fontWeight: 'bold', borderRadius: '15px 0 0 15px' }}
+                                                    className="btn btn-warning"
+                                                    style={{  border: '1px ', color: '#000', fontWeight: 'bold', borderRadius: '5px 0 0 5px' }}
                                                 >
                                                     Editar
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => deleteCategoria(categoria.id)}
-                                                    className="btn"
-                                                    style={{ backgroundColor: '#D46A90', border: '1px solid #000', color: '#fff', fontWeight: 'bold', borderRadius: '0 15px 15px 0' }}
+                                                    className="btn btn-danger"
+                                                    style={{  border: '1px ', color: '#fff', fontWeight: 'bold', borderRadius: '0 5px 5px 0' }}
                                                 >
                                                     Eliminar
                                                 </button>
